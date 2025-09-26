@@ -58,3 +58,6 @@ geolocation-system/
 ## Лицензия
 
 MIT License
+
+
+![photo_2025-09-26_20-14-37](https://github.com/user-attachments/assets/cd0b034e-aded-47b4-aa6a-9aea68a6ec48)
