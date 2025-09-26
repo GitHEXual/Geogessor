@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: geolocation-system
+  labels:
+    name: geolocation-system
+    app: geolocation
