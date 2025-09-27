@@ -58,5 +58,3 @@ geolocation-system/
 ## Лицензия
 
 MIT License
-
-<img width="227" height="223" alt="изображение" src="https://github.com/user-attachments/assets/5ed63ea5-e2de-4b5c-ba35-48736d11e021" />
