@@ -30,6 +30,7 @@ docker-compose up -d
 geolocation-system/
 ├── frontend/                 # React приложение
 ├── backend/                 # Микросервисы
+│   ├── neural-service/     # Neural Service (требует настройки)
 ├── ml-models/              # Модели машинного обучения
 ├── infrastructure/         # Инфраструктура
 ├── docs/                  # Документация
@@ -42,7 +43,7 @@ geolocation-system/
 1. **API Gateway** - Маршрутизация запросов
 2. **Auth Service** - Аутентификация и авторизация
 3. **Image Processing Service** - Обработка изображений
-4. **Neural Network Service** - CVM-Net модель
+4. **Neural Network Service** - CVM-Net модель (требует настройки)
 5. **Coordinates Service** - Работа с координатами
 6. **Export Service** - Экспорт данных
 7. **Notification Service** - Уведомления

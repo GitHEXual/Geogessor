@@ -1,66 +1,67 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: neural-service
-  namespace: geolocation-system
-  labels:
-    app: neural-service
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: neural-service
-  template:
-    metadata:
-      labels:
-        app: neural-service
-    spec:
-      containers:
-      - name: neural-service
-        image: geolocation/neural-service:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: MODEL_PATH
-          value: "/app/models/cvm-net"
-        resources:
-          requests:
-            memory: "2Gi"
-            cpu: "1000m"
-          limits:
-            memory: "4Gi"
-            cpu: "2000m"
-        volumeMounts:
-        - name: model-storage
-          mountPath: /app/models
-      volumes:
-      - name: model-storage
-        persistentVolumeClaim:
-          claimName: model-pvc
+# Neural Service манифест закомментирован - требует настройки модели
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: neural-service
+#   namespace: geolocation-system
+#   labels:
+#     app: neural-service
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: neural-service
+#   template:
+#     metadata:
+#       labels:
+#         app: neural-service
+#     spec:
+#       containers:
+#       - name: neural-service
+#         image: geolocation/neural-service:latest
+#         ports:
+#         - containerPort: 8000
+#         env:
+#         - name: MODEL_PATH
+#           value: "/app/models/cvm-net"
+#         resources:
+#           requests:
+#             memory: "2Gi"
+#             cpu: "1000m"
+#           limits:
+#             memory: "4Gi"
+#             cpu: "2000m"
+#         volumeMounts:
+#         - name: model-storage
+#           mountPath: /app/models
+#       volumes:
+#       - name: model-storage
+#         persistentVolumeClaim:
+#           claimName: model-pvc
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: neural-service
-  namespace: geolocation-system
-spec:
-  selector:
-    app: neural-service
-  ports:
-  - port: 8000
-    targetPort: 8000
-  type: ClusterIP
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: neural-service
+#   namespace: geolocation-system
+# spec:
+#   selector:
+#     app: neural-service
+#   ports:
+#   - port: 8000
+#     targetPort: 8000
+#   type: ClusterIP
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: model-pvc
-  namespace: geolocation-system
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: model-pvc
+#   namespace: geolocation-system
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 5Gi

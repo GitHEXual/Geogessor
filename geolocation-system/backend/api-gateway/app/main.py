@@ -36,7 +36,7 @@ app.add_middleware(
 SERVICES = {
     "auth": os.getenv("AUTH_SERVICE_URL", "http://auth-service:8000"),
     "image": os.getenv("IMAGE_SERVICE_URL", "http://image-service:8000"),
-    "neural": os.getenv("NEURAL_SERVICE_URL", "http://neural-service:8000"),
+    # "neural": os.getenv("NEURAL_SERVICE_URL", "http://neural-service:8000"),  # Закомментирован
     "coordinates": os.getenv("COORDINATES_SERVICE_URL", "http://coordinates-service:8000"),
     "export": os.getenv("EXPORT_SERVICE_URL", "http://export-service:8000"),
     "notification": os.getenv("NOTIFICATION_SERVICE_URL", "http://notification-service:8000"),
@@ -137,14 +137,14 @@ async def preprocess_image(request: Request):
     response = await proxy_request("image", "/preprocess", "POST", files=files)
     return response.json()
 
-# Neural network routes
-@app.post("/api/neural/predict")
-async def predict_coordinates(request: Request):
-    """Предсказание координат через нейросеть"""
-    form_data = await request.form()
-    files = await request.form()
-    response = await proxy_request("neural", "/predict", "POST", files=files)
-    return response.json()
+# Neural network routes (закомментированы - сервис не развернут)
+# @app.post("/api/neural/predict")
+# async def predict_coordinates(request: Request):
+#     """Предсказание координат через нейросеть"""
+#     form_data = await request.form()
+#     files = await request.form()
+#     response = await proxy_request("neural", "/predict", "POST", files=files)
+#     return response.json()
 
 # Coordinates routes
 @app.post("/api/coordinates/address")

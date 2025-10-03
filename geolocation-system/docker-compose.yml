@@ -83,20 +83,20 @@ services:
       timeout: 10s
       retries: 3
 
-  # Neural Network Service
-  neural-service:
-    build: ./backend/neural-service
-    ports:
-      - "8002:8000"
-    volumes:
-      - ./ml-models:/app/models
-    environment:
-      - MODEL_PATH=/app/models/cvm-net
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+  # Neural Network Service (закомментирован - требует настройки)
+  # neural-service:
+  #   build: ./backend/neural-service
+  #   ports:
+  #     - "8002:8000"
+  #   volumes:
+  #     - ./ml-models:/app/models
+  #   environment:
+  #     - MODEL_PATH=/app/models/cvm-net
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
 
   # Image Processing Service
   image-service:

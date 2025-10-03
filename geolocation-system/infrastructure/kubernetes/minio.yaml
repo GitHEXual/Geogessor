@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: geolocation-system
+  labels:
+    app: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio
+        command: ["minio", "server", "/data"]
+        env:
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: access-key
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: secret-key
+        ports:
+        - containerPort: 9000
+        - containerPort: 9001
+        volumeMounts:
+        - name: minio-storage
+          mountPath: /data
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: minio-storage
+        persistentVolumeClaim:
+          claimName: minio-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+  namespace: geolocation-system
+spec:
+  selector:
+    app: minio
+  ports:
+  - port: 9000
+    targetPort: 9000
+    name: api
+  - port: 9001
+    targetPort: 9001
+    name: console
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pvc
+  namespace: geolocation-system
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-secret
+  namespace: geolocation-system
+type: Opaque
+data:
+  access-key: bWluaW9hZG1pbg==  # base64 encoded "minioadmin"
+  secret-key: bWluaW9hZG1pbg==  # base64 encoded "minioadmin"

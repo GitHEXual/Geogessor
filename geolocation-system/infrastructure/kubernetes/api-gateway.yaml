@@ -25,8 +25,8 @@ spec:
           value: "http://auth-service:8000"
         - name: IMAGE_SERVICE_URL
           value: "http://image-service:8000"
-        - name: NEURAL_SERVICE_URL
-          value: "http://neural-service:8000"
+        # - name: NEURAL_SERVICE_URL
+        #   value: "http://neural-service:8000"  # Закомментирован
         - name: COORDINATES_SERVICE_URL
           value: "http://coordinates-service:8000"
         - name: EXPORT_SERVICE_URL
