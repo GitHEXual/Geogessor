@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: image_recognition_db
+    environment:
+      POSTGRES_DB: imagerecognition
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "4300:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d imagerecognition"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: image_recognition_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "4400:9000"  # API
+      - "4401:9001"  # Console
+    volumes:
+      - minio_data:/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: image_recognition_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=imagerecognition;Username=admin;Password=admin123"
+      MinIO__Endpoint: "minio:9000"
+      MinIO__AccessKey: "minioadmin"
+      MinIO__SecretKey: "minioadmin123"
+      MinIO__BucketName: "images"
+      MinIO__UseSSL: "false"
+      JWT__Secret: "your-super-secret-jwt-key-change-in-production-minimum-32-characters"
+      JWT__Issuer: "ImageRecognitionAPI"
+      JWT__Audience: "ImageRecognitionClient"
+      JWT__ExpiryMinutes: "60"
+    ports:
+      - "4100:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: image_recognition_frontend
+    environment:
+      VITE_API_URL: http://localhost:4100
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  app_network:
+    driver: bridge
+
